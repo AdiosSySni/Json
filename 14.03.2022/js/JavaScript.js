@@ -1,7 +1,7 @@
 let inputName = document.querySelector('#inputName'),
 startBtn = document.querySelector('#start'),
 clickBtn = document.querySelector('#click'),
-clearbtn = document.querySelector('#clear'),
+clearBtn = document.querySelector('#clear'),
 table = document.querySelector('#table'),
 
 gameTimerP = document.querySelector('#timer');
@@ -13,9 +13,13 @@ date = new Date(0,0,0,0,0,0,0);
 let obj = new Object(),
 timerId;
 
+let arr = [];
+let click = 0;
+
 
 
 startBtn.disabled = true;
+clickBtn.disabled = true;
 
 inputName.addEventListener('blur', ()=> {
         if(inputName.value.length > 0) {
@@ -27,20 +31,27 @@ inputName.addEventListener('blur', ()=> {
 })
 
 startBtn.addEventListener('click', game) 
-clearbtn.addEventListener('click', createTable)
+clearBtn.addEventListener('click', createTable)
 
 function createTable() {
-    obj.name = inputName.value;
-    obj.time = gameTimerP.textContent;
     stopTimer();
-
+    obj.name = localStorage.getItem('Name');
+    obj.time = localStorage.getItem('Timer');
     console.log(obj);
-    
-    for(let keys in obj) {
-        console.log(keys);
-        let tr = document.createElement('tr');
 
-        Object.values(obj) .forEach(element => {
+    arr.push(obj);
+    let arr2 = JSON.stringify(arr);
+    console.log(arr2);
+
+    let arr3 = JSON.parse(arr2) 
+    console.log(arr3);
+
+    for(let key of arr3) {
+        let tr = document.createElement('tr');
+        let arr4 = Object.values(key)
+        console.log(arr4);
+    
+        arr4.forEach(element => {
             let td = document.createElement('td');
             td.textContent = element;
             tr.appendChild(td)
@@ -48,16 +59,36 @@ function createTable() {
         });
         table.appendChild(tr);
     }
+  
+    // startBtn.disabled = true;
+    // clickBtn.disabled = true;
+    // clearBtn.disabled = true;
 }
-
 
 function stopTimer(){
     clearInterval(timerId);
-    gameTimerP = ' ';
+    localStorage.setItem('Timer', gameTimerP.textContent)
+    gameTimerP.textContent = ' ';
 }
 
 
 function game() {
+    localStorage.setItem('Name', inputName.value)
+    clickBtn.disabled = false;
+    // inputName.value = ' ';
+
+    clickBtn.addEventListener('click', ()=> {
+        click++;
+        if(click==10) {
+            startBtn.disabled = true;
+            clickBtn.disabled = true;
+            createTable()
+            stopTimer();
+            
+        }
+
+        console.log(click);
+    })
     gameTimer()
 }
 
@@ -68,7 +99,6 @@ function gameTimer() {
           date.setSeconds(date.getSeconds()+1);
 		gameTimerP.textContent = addZero(date.getMinutes()) + ':' + addZero(date.getSeconds());
 	}, 1000);
-
 
     function addZero(n){
         if (n<10){

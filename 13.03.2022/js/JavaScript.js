@@ -53,7 +53,7 @@ document.addEventListener('click', ()=> {
     let time2 = localStorage.getItem('time2');
 
     if (!time1) {
-        let time1 = ( new Date() ).getTime();
+        let time1 = (new Date()).getTime();
         localStorage.setItem('time',time1);
     }
     else {
